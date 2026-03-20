@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Creepster&family=Share+Tech+Mono&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: #030005;
+    color: #e0e0e0;
+    font-family: 'Share Tech Mono', monospace;
+    overflow-x: hidden;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0a0010;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #660000;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #cc0000;
+  }
+}
+
+@layer components {
+  /* Stranger Things glowing text */
+  .stranger-glow {
+    text-shadow:
+      0 0 10px rgba(255, 0, 0, 0.8),
+      0 0 20px rgba(255, 0, 0, 0.5),
+      0 0 40px rgba(255, 0, 0, 0.3),
+      0 0 80px rgba(180, 0, 0, 0.2);
+  }
+
+  .stranger-glow-sm {
+    text-shadow:
+      0 0 6px rgba(255, 0, 0, 0.7),
+      0 0 12px rgba(255, 0, 0, 0.4);
+  }
+
+  .rift-glow {
+    text-shadow:
+      0 0 10px rgba(180, 79, 255, 0.8),
+      0 0 20px rgba(180, 79, 255, 0.4);
+  }
+
+  /* Pixel-art image rendering – critical for crisp pixels */
+  .pixel-art {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+
+  /* VHS grain overlay */
+  .vhs-grain::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 10;
+    animation: grainShift 0.5s steps(1) infinite;
+  }
+
+  /* Scanlines */
+  .scanlines::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      rgba(0, 0, 0, 0.15) 2px,
+      rgba(0, 0, 0, 0.15) 4px
+    );
+    pointer-events: none;
+    z-index: 11;
+  }
+
+  /* Red corner glow on cards */
+  .card-corner-glow::before,
+  .card-corner-glow::after {
+    content: '';
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255, 0, 0, 0.15);
+    filter: blur(20px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .card-corner-glow::before {
+    top: -20px;
+    left: -20px;
+  }
+  .card-corner-glow::after {
+    bottom: -20px;
+    right: -20px;
+  }
+
+  /* Rarity badges */
+  .rarity-common {
+    @apply bg-gray-700 text-gray-300 border border-gray-500;
+  }
+  .rarity-rare {
+    @apply bg-blue-900 text-blue-300 border border-blue-500;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+  }
+  .rarity-epic {
+    @apply bg-purple-900 text-purple-300 border border-purple-500;
+    box-shadow: 0 0 8px rgba(168, 85, 247, 0.5);
+  }
+  .rarity-legendary {
+    @apply bg-yellow-900 text-yellow-300 border border-yellow-500;
+    box-shadow: 0 0 12px rgba(234, 179, 8, 0.6);
+  }
+
+  /* Glass nav */
+  .glass-nav {
+    background: rgba(10, 0, 16, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 0, 0, 0.2);
+  }
+
+  /* Void card */
+  .void-card {
+    background: linear-gradient(135deg, #120018 0%, #0a0010 50%, #030005 100%);
+    border: 1px solid rgba(255, 0, 0, 0.15);
+  }
+}
+
+@layer utilities {
+  @keyframes grainShift {
+    0% { background-position: 0 0; }
+    25% { background-position: 50% 25%; }
+    50% { background-position: 25% 75%; }
+    75% { background-position: 75% 50%; }
+    100% { background-position: 0 0; }
+  }
+}

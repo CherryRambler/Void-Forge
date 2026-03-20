@@ -1,0 +1,29 @@
+# Virtual environments
+.venv/
+backend/python_env/
+backend/get-pip.py
+backend/python_embed.zip
+
+# Environment variables (NEVER commit API keys)
+backend/.env
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Node modules
+frontend/node_modules/
+
+# Build output
+frontend/dist/
+
+# Error logs
+backend/error_output*.txt
+
+# Test files
+backend/test_image.png
+
+# Misc
+backend/models.txt
