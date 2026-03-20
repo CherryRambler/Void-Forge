@@ -13,6 +13,14 @@ A full-stack web application that generates fantastical creatures using AI. Crea
 - **Graceful Fallbacks**: If any API fails, the app continues working with intelligent prompt-aware fallback lore
 - **RESTful API**: Full CRUD endpoints for creatures and image serving
 
+## 🌐 Live Demo
+
+| | URL |
+|---|---|
+| **Frontend** | [void-forge-zeta.vercel.app](https://void-forge-zeta.vercel.app) |
+| **Backend API** | [void-forge.onrender.com](https://void-forge.onrender.com) |
+| **API Docs** | [void-forge.onrender.com/docs](https://void-forge.onrender.com/docs) |
+
 ## 🛠️ Tech Stack
 
 ### Frontend
