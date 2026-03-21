@@ -1,17 +1,18 @@
-# 🧬 Creature Generator
+# 🧬 Void Forge — Creature Generator
 
 A full-stack web application that generates fantastical creatures using AI. Create unique creatures with AI-generated lore, stats, and images — each one different every time.
 
 ## ✨ Features
 
-- **AI-Powered Lore**: Generates unique creature titles, backstories, abilities, weaknesses, and rarity via OpenRouter free LLMs
-- **AI-Powered Images**: Generates pixel-art creature images via Hugging Face FLUX.1-schnell
-- **Parallel Generation**: Image and lore are generated simultaneously for maximum speed
-- **Creature Gallery**: Browse and explore all previously generated creatures
-- **Rarity System**: Creatures are classified as Common, Rare, Epic, or Legendary
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
-- **Graceful Fallbacks**: If any API fails, the app continues working with intelligent prompt-aware fallback lore
-- **RESTful API**: Full CRUD endpoints for creatures and image serving
+- **AI-Powered Lore** — Generates unique creature titles, backstories, abilities, weaknesses, and rarity via OpenRouter free LLMs
+- **AI-Powered Images** — Generates pixel-art creature images via Hugging Face FLUX.1-schnell
+- **Parallel Generation** — Image and lore are generated simultaneously for maximum speed
+- **Creature Gallery** — Browse and explore all previously generated creatures
+- **Rarity System** — Creatures are classified as Common, Rare, Epic, or Legendary
+- **Responsive Design** — Works seamlessly on desktop and mobile devices
+- **Graceful Fallbacks** — If any API fails, the app continues working with intelligent prompt-aware fallback lore
+- **Keep-Alive Ping** — Backend pings itself every 14 minutes to prevent Render free tier cold starts
+- **RESTful API** — Full CRUD endpoints for creatures and image serving
 
 ## 🌐 Live Demo
 
@@ -20,6 +21,8 @@ A full-stack web application that generates fantastical creatures using AI. Crea
 | **Frontend** | [void-forge-zeta.vercel.app](https://void-forge-zeta.vercel.app) |
 | **Backend API** | [void-forge.onrender.com](https://void-forge.onrender.com) |
 | **API Docs** | [void-forge.onrender.com/docs](https://void-forge.onrender.com/docs) |
+
+> ⚠️ Backend is hosted on Render free tier. If the site is slow on first load, open the [health check](https://void-forge.onrender.com/health) first to wake it up.
 
 ## 🛠️ Tech Stack
 
@@ -38,6 +41,7 @@ A full-stack web application that generates fantastical creatures using AI. Crea
 - **Pillow** — Image processing and resizing
 - **Pydantic v2** — Data validation and models
 - **Uvicorn** — ASGI server
+- **httpx** — Async HTTP client for API calls and keep-alive pings
 
 ## 📁 Project Structure
 
@@ -53,7 +57,7 @@ creature-generator/
 │   └── tailwind.config.js
 │
 └── backend/                    # Python FastAPI backend
-    ├── main.py                # FastAPI app + all endpoints
+    ├── main.py                # FastAPI app + all endpoints + keep-alive
     ├── models.py              # Pydantic request/response models
     ├── generation.py          # Image + lore generation pipeline
     ├── db.py                  # In-memory mock MongoDB collection
@@ -121,7 +125,7 @@ Frontend runs on `http://localhost:5173`
 fastapi
 uvicorn
 python-dotenv
-openai          # used for OpenRouter client
+openai
 httpx
 pillow
 pydantic
@@ -161,9 +165,29 @@ If the primary model is rate-limited or unavailable, the backend automatically t
 5. `arcee-ai/arcee-blitz:free`
 6. Prompt-aware local fallback (no API needed)
 
+## ☁️ Deployment
+
+| Service | Platform | Free |
+|---------|----------|------|
+| Frontend | Vercel | ✅ |
+| Backend | Render | ✅ |
+
+### Environment Variables
+
+**Render (Backend):**
+```
+HF_API_KEY         = hf_xxxxxxxxxxxxxxxx
+OPENROUTER_API_KEY = sk-or-xxxxxxxxxxxxxxxx
+```
+
+**Vercel (Frontend):**
+```
+VITE_API_URL = https://void-forge.onrender.com
+```
+
 ## 🎮 Usage
 
-1. Open `http://localhost:5173` in your browser
+1. Open [void-forge-zeta.vercel.app](https://void-forge-zeta.vercel.app) in your browser
 2. Enter a creature description (e.g. *"shadow demon with glowing red eyes and wings"*)
 3. Click **Generate** — image and lore are created in parallel
 4. View the creature's stats, backstory, ability, and weakness

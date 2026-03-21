@@ -2,8 +2,10 @@ import asyncio
 import base64
 import traceback
 import uuid
+from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
+import httpx
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
@@ -13,7 +15,41 @@ from generation import generate_creature
 from db import creatures_collection
 from utils import _doc_to_response
 
-app = FastAPI()
+
+# ---------------------------------------------------------------------------
+# KEEP-ALIVE — prevents Render free tier from sleeping
+# ---------------------------------------------------------------------------
+
+async def keep_alive():
+    """Pings /health every 14 minutes so Render never spins down."""
+    await asyncio.sleep(60)  # wait 1 min after startup before first ping
+    while True:
+        try:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                await client.get("https://void-forge.onrender.com/health")
+                print("Keep-alive ping sent.")
+        except Exception as e:
+            print(f"Keep-alive ping failed: {e}")
+        await asyncio.sleep(840)  # 14 minutes
+
+
+# ---------------------------------------------------------------------------
+# LIFESPAN — runs on startup/shutdown
+# ---------------------------------------------------------------------------
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Start keep-alive task on startup
+    asyncio.create_task(keep_alive())
+    yield
+    # Shutdown — nothing to clean up for mock DB
+
+
+# ---------------------------------------------------------------------------
+# APP
+# ---------------------------------------------------------------------------
+
+app = FastAPI(lifespan=lifespan)
 
 # ---------------------------------------------------------------------------
 # CORS
@@ -60,7 +96,7 @@ async def generate(request: GenerateRequest):
     lore   = result.get("lore", {})
     images = result.get("images", {})
 
-    # Reject if both images are empty (something went very wrong)
+    # Reject if both images are empty
     if not images.get("full_b64") and not images.get("thumb_b64"):
         raise HTTPException(status_code=500, detail="Image generation produced no output.")
 
@@ -77,8 +113,8 @@ async def generate(request: GenerateRequest):
         "ability":      lore.get("ability", ""),
         "rarity":       lore.get("rarity", "Common"),
         "stats": {
-            "intensity":    int(stats.get("intensity",    50)),
-            "stealth":      int(stats.get("stealth",      50)),
+            "intensity":     int(stats.get("intensity",    50)),
+            "stealth":       int(stats.get("stealth",      50)),
             "rift_affinity": int(stats.get("rift_affinity", 50)),
         },
         "full_b64":  images.get("full_b64",  ""),
@@ -138,7 +174,7 @@ async def get_creature(creature_id: str):
 
 
 # ---------------------------------------------------------------------------
-# SERVE FULL IMAGE  — fixes GET /images/{id}/full 404
+# SERVE FULL IMAGE
 # ---------------------------------------------------------------------------
 @app.get("/images/{creature_id}/full")
 async def get_image_full(creature_id: str):
@@ -159,7 +195,7 @@ async def get_image_full(creature_id: str):
 
 
 # ---------------------------------------------------------------------------
-# SERVE THUMBNAIL  — fixes GET /images/{id}/thumb 404
+# SERVE THUMBNAIL
 # ---------------------------------------------------------------------------
 @app.get("/images/{creature_id}/thumb")
 async def get_image_thumb(creature_id: str):
